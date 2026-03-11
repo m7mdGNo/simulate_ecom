@@ -11,8 +11,8 @@ RUN apt-get update \
     ENV PYTHONUNBUFFERED 1
     ENV PYTHONDONTWRITEBYTECODE 1
     
-    RUN mkdir /farm_ecommerce
-    WORKDIR /farm_ecommerce
+    RUN mkdir /simulate_ecom
+    WORKDIR /simulate_ecom
     
 COPY . .
 

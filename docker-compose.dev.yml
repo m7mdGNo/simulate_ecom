@@ -3,22 +3,22 @@ services:
     build: .
     restart: always
     command: bash -c "python manage.py migrate && python manage.py createsuperuser --noinput || true && python manage.py runserver 0.0.0.0:8000"
-    container_name: farm_ecommerce_dev
+    container_name: simulate_ecom_dev
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - .:/farm_ecommerce
+      - .:/simulate_ecom
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/farm_ecommerce
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/simulate_ecom
     ports:
       - "8001:8000"
 
   prometheus:
     image: prom/prometheus:v2.54.1
-    container_name: farm_ecommerce_prometheus
+    container_name: simulate_ecom_prometheus
     restart: always
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -29,7 +29,7 @@ services:
 
   grafana:
     image: grafana/grafana:11.2.2
-    container_name: farm_ecommerce_grafana
+    container_name: simulate_ecom_grafana
     restart: always
     environment:
       GF_SECURITY_ADMIN_USER: admin
@@ -47,15 +47,15 @@ services:
   db:
     image: postgres:16-alpine
     restart: always
-    container_name: farm_ecommerce_db_dev
+    container_name: simulate_ecom_db_dev
     environment:
-      POSTGRES_DB: farm_ecommerce
+      POSTGRES_DB: simulate_ecom
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d farm_ecommerce"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d simulate_ecom"]
       interval: 5s
       timeout: 5s
       retries: 10

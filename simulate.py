@@ -181,4 +181,4 @@ def simulate(users_count=100, max_workers=50):
 
 
 if __name__ == "__main__":
-    simulate(users_count=10000, max_workers=50)
+    simulate(users_count=100, max_workers=50)

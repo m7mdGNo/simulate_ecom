@@ -1,0 +1,25 @@
+- VPS
+    Install Docker and Docker-Compose
+        - sudo apt update
+        - sudo apt install docker.io docker-compose
+        - sudo systemctl start docker
+        - sudo systemctl enable docker
+
+    Create a Docker Network
+        docker network create cowdly_network #3da6b16d74e1b5505827361e834744e45af07b96af75c6f33f016653e9c13444
+
+    
+    sudo apt install nginx
+
+    Configure Nginx for Multiple Projects:
+        Edit the Nginx configuration file or create a new one for each project under /etc/nginx/sites-available/.
+
+
+
+db_name = dashboard_cowdly
+role = dashboard
+password = cowdly!2024
+
+Docker compose profiles for this project:
+- Development: docker compose -f docker-compose.dev.yml up -d --build
+- Production: docker compose -f docker-compose.prod.yml up -d --build

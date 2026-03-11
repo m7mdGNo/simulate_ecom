@@ -1,0 +1,8 @@
+.env
+._*
+.pytest_cache/
+*.pyc
+/venv/
+db.*
+/media/
+/static/

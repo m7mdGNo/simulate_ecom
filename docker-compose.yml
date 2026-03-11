@@ -1,0 +1,38 @@
+services:
+  django:
+    build: .
+    restart: always
+    command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && python manage.py createsuperuser --noinput || true && gunicorn --workers 8 --bind  0.0.0.0:8000 --preload project.wsgi:application"
+    container_name: farm_ecommerce
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/farm_ecommerce
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/farm_ecommerce
+    ports:
+      - "127.0.0.1:8001:8000"
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    container_name: farm_ecommerce_db
+    environment:
+      POSTGRES_DB: farm_ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d farm_ecommerce"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

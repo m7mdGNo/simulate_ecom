@@ -1,0 +1,65 @@
+services:
+  django:
+    build: .
+    restart: always
+    command: bash -c "python manage.py migrate && python manage.py createsuperuser --noinput || true && python manage.py runserver 0.0.0.0:8000"
+    container_name: farm_ecommerce_dev
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/farm_ecommerce
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/farm_ecommerce
+    ports:
+      - "8001:8000"
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: farm_ecommerce_prometheus
+    restart: always
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - django
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    container_name: farm_ecommerce_grafana
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    container_name: farm_ecommerce_db_dev
+    environment:
+      POSTGRES_DB: farm_ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d farm_ecommerce"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data_dev:
+  grafana_data:

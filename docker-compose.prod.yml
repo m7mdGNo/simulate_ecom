@@ -58,6 +58,12 @@ services:
       timeout: 5s
       retries: 10
 
+  simulate:
+    build: .
+    command: bash -c "API_URL=http://django:8000/api python simulate.py"
+    depends_on:
+      - django
+
 volumes:
   postgres_data:
   grafana_data_prod:

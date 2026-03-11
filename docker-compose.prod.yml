@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/simulate_ecom
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/farm_ecommerce
     ports:
       - "8001:8000"
 
@@ -47,13 +47,13 @@ services:
     restart: always
     container_name: simulate_ecom_db
     environment:
-      POSTGRES_DB: simulate_ecom
+      POSTGRES_DB: farm_ecommerce
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d simulate_ecom"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d farm_ecommerce"]
       interval: 5s
       timeout: 5s
       retries: 10
